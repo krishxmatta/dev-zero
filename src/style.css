@@ -364,3 +364,10 @@ ul.articles {
 footer {
     font-size: 13px;
 }
+.square-header {
+  display: table;
+  margin: 0px auto 0px auto;
+  padding: 0.2rem;
+  background-color: #5e81ac;
+  font-weight: 600;
+}
