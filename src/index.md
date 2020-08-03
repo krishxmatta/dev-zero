@@ -6,8 +6,11 @@ My tech journey started all the way back when I was seven years old, where in th
 ## software development
 /dev/zero's name signifies my programming philosophy: keep code minimal and straightforward.
 > Good design is as little design as possible. - Dieter Rams
+
 Simple code has many benefits:
+
 * less bugs
 * low memory footprint
 * longer software lifetime
+
 Needlessly complex code opens the door to errors and vulnerabilities. Keep it simple, stupid.
