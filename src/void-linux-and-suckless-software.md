@@ -35,27 +35,28 @@ $ cd void-packages
 $ ./xbps-src binary-bootstrap
 ```
 
-In the command above, `binary-bootstrap` indicates that container packages will be installed through binaries, either from xbps or a local repository. If you were to substitute `binary-bootstrap` for `bootstrap`, packages will be built from scratch using your host system's toolchain; this is not recommended.
+In the command above, `binary-bootstrap` indicates that container packages will be installed through binaries, either from xbps or a local repository. If you were to substitute `binary-bootstrap` with `bootstrap`, packages will be built from scratch using your host system's toolchain; this is not recommended.
 
 Take note that the above commands only have to be done once to setup `xbps-src`.
 
 ## Configuring Packages
-This is the fun part, where you get to configure your software with custom configs and patches. We won't have to create our own templates as void-packages already includes most Suckless software.
+This is the fun part, where you get to configure your software with custom configs and patches. We won't have to create our own package templates as void-packages already includes most Suckless software.
 
 ### Using a Custom config.h
-Using a custom config.h file is pretty easy. First, create a "files" directory inside the srcpkg folder of the software you're trying to configure. This folder may/may not already exist; it depends on what the exact package is. 
+Using a custom config.h file is pretty easy. First, create a "files" directory inside the srcpkg directory of the software you're trying to configure. This "files" directory may/may not already exist; it depends on what the exact package is. 
 
 ```
 $ mkdir srcpkgs/<package-name>/files
 ```
 
-In here, we'll put our custom config.h; if you already have a config.h ready to go, just download it and put it into the "files" directory. For example, taking the config.h for my st build (in this use case, <package-name>=st):
+In here, we'll put our custom config.h; if you already have a config.h ready to go, just download it and put it into the "files" directory. For example, taking the config.h for my st build (in this use case, \<package-name\> = st):
 
 ```
 $ curl https://raw.githubusercontent.com/krishxmatta/st/master/config.h --output srcpkgs/<package-name>/files/config.h
 ```
 
 If you need the default config.h to modify, follow the below steps:
+
 Extract the package source distribution files into the container. This allows you to see all the source files of the package you're trying to build.
 
 ```
@@ -71,13 +72,13 @@ cp masterdir/builddir/<package-name>-<version>/config.def.h srcpkgs/<package-nam
 You can now edit `srcpkgs/<package-name>/files/config.h` to fit your needs.
 
 ### Applying Patches
-Applying patches to the software is also a relatively trivial task. First, you'll need to create a "patches" folder in the srcpkg folder of the package you're customizing.
+Applying patches to the software is also a relatively trivial task. First, you'll need to create a "patches" directory in the srcpkg directory of the package you're customizing.
 
 ```
 $ mkdir srcpkgs/<package-name>/patches
 ```
 
-Next, you'll have to place the specific patch into the recently created "patches" directory. Using the url to st's `clipboard` patch as an example (in this particular case, <package-name> = st, and <patch-name> = clipboard):
+Next, you'll have to place the specific patch into the recently created "patches" directory. Using the url to st's `clipboard` patch as an example (in this particular case, \<package-name\> = st, and \<patch-name\> = clipboard):
 
 ```
 $ curl https://st.suckless.org/patches/clipboard/st-clipboard-0.8.3.diff --output srcpkgs/<package-name>/patches/<patch-name>.diff
@@ -100,7 +101,7 @@ $ ./xbps-src pkg -f <package-name>
 
 Above, the `pkg` command indicates that we'll be building a binary for the package. The `-f` argument is to force-rebuild the package; this is to ensure that our latest changes will be built.
 
-After the binary has been built, we need to actually install it on our system. We can handle this with `xbps-install` (root permissions are required to run this):
+After the binary has been built, we need to actually install it on our system. We can handle this with `xbps-install`:
 
 ```
 $ xbps-install --repository ./hostdir/binpkgs -f <package-name>
@@ -108,14 +109,14 @@ $ xbps-install --repository ./hostdir/binpkgs -f <package-name>
 
 The `--repository` flag indicates that we'll be installing the package from our local repository, rather than Void's official repositories. The `-f` parameter indicates that we'll be force installing the package, thus wiping out any previous install.
 
-After the package is installed, we have one last step: hold the package. If we were to update our system without holding the package, xbps would install the binary available in Void's official repositories; thus overwriting all of our custom changes. Holding the package prevents this from happening, and can be done like so:
+After the package is installed, we have one last step: hold the package. If we were to update our system without holding the package, `xbps` would install the binary available in Void's official repositories, overwriting all of our custom changes. Holding the package prevents this from happening, and can be done like so:
 
 ```
 $ xbps-pkgdb -m hold <package-name>
 ```
 
 ## Updating Packages
-Whenever I use Suckless software, I usually refrain from updating; if it ain't broke, don't fix it. Regardless, if you need a new version for some reason, you'll need to first bring the void-packages repository up-to-date.
+Whenever I use Suckless software, I usually refrain from updating; if it ain't broke, don't fix it. Regardless, if you need a new version for some reason, you'll first need to bring the void-packages repository up-to-date.
 
 ```
 $ git pull
@@ -127,6 +128,6 @@ Next, check if your package has been updated.
 $ xbps-checkvers -D . -I -m <package-name>
 ```
 
-In the above command, `-D` is used to specify the location of the void-packages directory, `-I` is used to indicate that you want to compare the version of your currently installed package to the latest corresponding template, and `-m` is used to specify which specific package you're checking for.
+In the above command, `-D` is used to specify the location of the void-packages directory, `-I` is used to indicate that you want to compare the version of your currently installed package to the latest corresponding template, and `-m` is used to specify which specific package you're checking.
 
 In the case that your package is outdated, you may have to customize a new config.h to reflect newer changes, and also use updated patches. After doing so, you'll have to rebuild and reinstall the package in the same process shown above.

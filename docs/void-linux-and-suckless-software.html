@@ -66,28 +66,29 @@
 $ .&#47;xbps-src binary-bootstrap
 </code></pre>
 
-<p>In the command above, <code>binary-bootstrap</code> indicates that container packages will be installed through binaries, either from xbps or a local repository. If you were to substitute <code>binary-bootstrap</code> for <code>bootstrap</code>, packages will be built from scratch using your host system&#39;s toolchain; this is not recommended.</p>
+<p>In the command above, <code>binary-bootstrap</code> indicates that container packages will be installed through binaries, either from xbps or a local repository. If you were to substitute <code>binary-bootstrap</code> with <code>bootstrap</code>, packages will be built from scratch using your host system&#39;s toolchain; this is not recommended.</p>
 
 <p>Take note that the above commands only have to be done once to setup <code>xbps-src</code>.</p>
 
 <h2 id="Configuring%20Packages">Configuring Packages</h2>
 
-<p>This is the fun part, where you get to configure your software with custom configs and patches. We won&#39;t have to create our own templates as void-packages already includes most Suckless software.</p>
+<p>This is the fun part, where you get to configure your software with custom configs and patches. We won&#39;t have to create our own package templates as void-packages already includes most Suckless software.</p>
 
 <h3 id="Using%20a%20Custom%20config.h">Using a Custom config.h</h3>
 
-<p>Using a custom config.h file is pretty easy. First, create a &#8220;files&#8221; directory inside the srcpkg folder of the software you&#39;re trying to configure. This folder may&#47;may not already exist; it depends on what the exact package is. </p>
+<p>Using a custom config.h file is pretty easy. First, create a &#8220;files&#8221; directory inside the srcpkg directory of the software you&#39;re trying to configure. This &#8220;files&#8221; directory may&#47;may not already exist; it depends on what the exact package is. </p>
 
 <pre><code>$ mkdir srcpkgs&#47;&#60;package-name&#62;&#47;files
 </code></pre>
 
-<p>In here, we&#39;ll put our custom config.h; if you already have a config.h ready to go, just download it and put it into the &#8220;files&#8221; directory. For example, taking the config.h for my st build (in this use case, <package-name>=st):</p>
+<p>In here, we&#39;ll put our custom config.h; if you already have a config.h ready to go, just download it and put it into the &#8220;files&#8221; directory. For example, taking the config.h for my st build (in this use case, &#60;package-name&#62; = st):</p>
 
 <pre><code>$ curl https:&#47;&#47;raw.githubusercontent.com&#47;krishxmatta&#47;st&#47;master&#47;config.h --output srcpkgs&#47;&#60;package-name&#62;&#47;files&#47;config.h
 </code></pre>
 
-<p>If you need the default config.h to modify, follow the below steps:
-Extract the package source distribution files into the container. This allows you to see all the source files of the package you&#39;re trying to build.</p>
+<p>If you need the default config.h to modify, follow the below steps:</p>
+
+<p>Extract the package source distribution files into the container. This allows you to see all the source files of the package you&#39;re trying to build.</p>
 
 <pre><code>$ .&#47;xbps-src extract &#60;package-name&#62;
 </code></pre>
@@ -101,12 +102,12 @@ Extract the package source distribution files into the container. This allows yo
 
 <h3 id="Applying%20Patches">Applying Patches</h3>
 
-<p>Applying patches to the software is also a relatively trivial task. First, you&#39;ll need to create a &#8220;patches&#8221; folder in the srcpkg folder of the package you&#39;re customizing.</p>
+<p>Applying patches to the software is also a relatively trivial task. First, you&#39;ll need to create a &#8220;patches&#8221; directory in the srcpkg directory of the package you&#39;re customizing.</p>
 
 <pre><code>$ mkdir srcpkgs&#47;&#60;package-name&#62;&#47;patches
 </code></pre>
 
-<p>Next, you&#39;ll have to place the specific patch into the recently created &#8220;patches&#8221; directory. Using the url to st&#39;s <code>clipboard</code> patch as an example (in this particular case, <package-name> = st, and <patch-name> = clipboard):</p>
+<p>Next, you&#39;ll have to place the specific patch into the recently created &#8220;patches&#8221; directory. Using the url to st&#39;s <code>clipboard</code> patch as an example (in this particular case, &#60;package-name&#62; = st, and &#60;patch-name&#62; = clipboard):</p>
 
 <pre><code>$ curl https:&#47;&#47;st.suckless.org&#47;patches&#47;clipboard&#47;st-clipboard-0.8.3.diff --output srcpkgs&#47;&#60;package-name&#62;&#47;patches&#47;&#60;patch-name&#62;.diff
 </code></pre>
@@ -127,21 +128,21 @@ Extract the package source distribution files into the container. This allows yo
 
 <p>Above, the <code>pkg</code> command indicates that we&#39;ll be building a binary for the package. The <code>-f</code> argument is to force-rebuild the package; this is to ensure that our latest changes will be built.</p>
 
-<p>After the binary has been built, we need to actually install it on our system. We can handle this with <code>xbps-install</code> (root permissions are required to run this):</p>
+<p>After the binary has been built, we need to actually install it on our system. We can handle this with <code>xbps-install</code>:</p>
 
 <pre><code>$ xbps-install --repository .&#47;hostdir&#47;binpkgs -f &#60;package-name&#62;
 </code></pre>
 
 <p>The <code>--repository</code> flag indicates that we&#39;ll be installing the package from our local repository, rather than Void&#39;s official repositories. The <code>-f</code> parameter indicates that we&#39;ll be force installing the package, thus wiping out any previous install.</p>
 
-<p>After the package is installed, we have one last step: hold the package. If we were to update our system without holding the package, xbps would install the binary available in Void&#39;s official repositories; thus overwriting all of our custom changes. Holding the package prevents this from happening, and can be done like so:</p>
+<p>After the package is installed, we have one last step: hold the package. If we were to update our system without holding the package, <code>xbps</code> would install the binary available in Void&#39;s official repositories, overwriting all of our custom changes. Holding the package prevents this from happening, and can be done like so:</p>
 
 <pre><code>$ xbps-pkgdb -m hold &#60;package-name&#62;
 </code></pre>
 
 <h2 id="Updating%20Packages">Updating Packages</h2>
 
-<p>Whenever I use Suckless software, I usually refrain from updating; if it ain&#39;t broke, don&#39;t fix it. Regardless, if you need a new version for some reason, you&#39;ll need to first bring the void-packages repository up-to-date.</p>
+<p>Whenever I use Suckless software, I usually refrain from updating; if it ain&#39;t broke, don&#39;t fix it. Regardless, if you need a new version for some reason, you&#39;ll first need to bring the void-packages repository up-to-date.</p>
 
 <pre><code>$ git pull
 </code></pre>
@@ -151,7 +152,7 @@ Extract the package source distribution files into the container. This allows yo
 <pre><code>$ xbps-checkvers -D . -I -m &#60;package-name&#62;
 </code></pre>
 
-<p>In the above command, <code>-D</code> is used to specify the location of the void-packages directory, <code>-I</code> is used to indicate that you want to compare the version of your currently installed package to the latest corresponding template, and <code>-m</code> is used to specify which specific package you&#39;re checking for.</p>
+<p>In the above command, <code>-D</code> is used to specify the location of the void-packages directory, <code>-I</code> is used to indicate that you want to compare the version of your currently installed package to the latest corresponding template, and <code>-m</code> is used to specify which specific package you&#39;re checking.</p>
 
 <p>In the case that your package is outdated, you may have to customize a new config.h to reflect newer changes, and also use updated patches. After doing so, you&#39;ll have to rebuild and reinstall the package in the same process shown above.</p>
     </article>
