@@ -1,5 +1,5 @@
 # Void Linux and Suckless Software: A Perfect Combo!
-<p class="date">August 8, 2020</p>
+<p class="date">August 9, 2020</p>
 I'm a huge fan of [Void Linux](https://voidlinux.org/) for many reasons. One of the great things about it is that the distribution is binary focused, yet still provides an elegant tool for compiling software from source: `xbps-src`.
 
 `xbps-src` allows you to build packages from simple templates found in the [void-packages](https://github.com/void-linux/void-packages) repository; unlike the AUR, which creates a huge security risk if you're not reading the PKGBUILD files, templates submitted to void-packages must meet a quality requirement to be included. If a package you want isn't available on the repo, don't fret: you can either create your own template or use someone else's template hosted on their own GitHub account (e.g. the [Liquorix Kernel](https://github.com/DBLouis/void-linux-liquorix)).
